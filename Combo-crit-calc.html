@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Source Table — 6 Kolom</title>
+  <style>
+    :root{
+      --bg:#0f1724; /* dark navy */
+      --card:#0b1220;
+      --muted:#9aa4b2;
+      --accent:#38bdf8; /* sky-400 */
+      --glass: rgba(255,255,255,0.03);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,var(--bg) 0%, #071028 100%);
+      color: #e6eef6;
+      -webkit-font-smoothing:antialiased;
+      padding:32px;
+    }
+
+    .container{
+      max-width:1100px;
+      margin:0 auto;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:18px;
+    }
+
+    h1{
+      margin:0;
+      font-size:20px;
+      letter-spacing:0.2px;
+    }
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+
+    .card{
+      background: linear-gradient(180deg,var(--card), rgba(11,18,32,0.6));
+      border-radius:12px;
+      padding:14px;
+      box-shadow:0 6px 18px rgba(3,7,18,0.6);
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      table-layout:fixed;
+      font-size:14px;
+      overflow:hidden;
+      border-radius:8px;
+    }
+
+    thead th{
+      text-align:left;
+      font-weight:600;
+      padding:12px 14px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      color:var(--muted);
+      font-size:13px;
+      vertical-align:middle;
+      border-bottom:1px solid rgba(255,255,255,0.03);
+    }
+
+    tbody td{
+      padding:12px 14px;
+      border-bottom:1px dashed rgba(255,255,255,0.02);
+      vertical-align:middle;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    tbody tr:hover td{background:var(--glass)}
+
+    .col-source{width:25%}
+    .col-combo{width:20%}
+    .col-r{width:13.75%} /* remaining three split */
+
+    /* simple responsive: stack into cards on small screens */
+    @media (max-width:700px){
+      table, thead, tbody, th, td, tr{display:block}
+      thead{display:none}
+      tbody tr{margin-bottom:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border-radius:8px;padding:10px}
+      tbody td{display:flex;justify-content:space-between;padding:8px 10px;white-space:normal}
+      tbody td::before{content:attr(data-label);color:var(--muted);font-weight:600;margin-right:10px}
+    }
+
+    /* small utility */
+    .muted{color:var(--muted);font-size:13px}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);font-weight:600}
+
+    .actions{display:flex;gap:8px;align-items:center}
+    button.btn{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px 10px;border-radius:8px;color:var(--accent);cursor:pointer}
+    button.btn:active{transform:translateY(1px)}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Tabel — 6 Kolom</h1>
+        <p class="lead">Kolom: <strong>Source</strong>, <strong>Combo Rate</strong>, <strong>R1</strong>, <strong>R2</strong>, <strong>R3</strong>, <strong>R4</strong>.</p>
+      </div>
+      <div class="actions">
+        <button class="btn" onclick="addRow()">+ Tambah baris</button>
+        <button class="btn" onclick="downloadCSV()">Unduh CSV</button>
+      </div>
+    </header>
+
+    <section class="card">
+      <table id="mainTable" aria-label="Tabel Source">
+        <thead>
+          <tr>
+            <th class="col-source">Source</th>
+            <th class="col-combo">Combo Rate</th>
+            <th class="col-r">R1</th>
+            <th class="col-r">R2</th>
+            <th class="col-r">R3</th>
+            <th class="col-r">R4</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- contoh baris; ubah / hapus sesuai kebutuhan -->
+          <tr>
+            <td data-label="Source">Example A</td>
+            <td data-label="Combo Rate">1.25</td>
+            <td data-label="R1">0.30</td>
+            <td data-label="R2">0.10</td>
+            <td data-label="R3">0.20</td>
+            <td data-label="R4">0.65</td>
+          </tr>
+          <tr>
+            <td data-label="Source">Example B</td>
+            <td data-label="Combo Rate">0.95</td>
+            <td data-label="R1">0.15</td>
+            <td data-label="R2">0.20</td>
+            <td data-label="R3">0.25</td>
+            <td data-label="R4">0.35</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <p class="muted" style="margin-top:10px">Tips: klik "+ Tambah baris" untuk menambahkan baris contoh. Tabel ini responsif: pada layar kecil setiap baris tampil seperti kartu.</p>
+  </div>
+
+  <script>
+    function addRow(){
+      const tbody = document.querySelector('#mainTable tbody');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td data-label="Source">New Source</td>
+        <td data-label="Combo Rate">0.00</td>
+        <td data-label="R1">0.00</td>
+        <td data-label="R2">0.00</td>
+        <td data-label="R3">0.00</td>
+        <td data-label="R4">0.00</td>
+      `;
+      tbody.appendChild(tr);
+      tr.scrollIntoView({behavior:'smooth',block:'center'});
+    }
+
+    function downloadCSV(){
+      const rows = Array.from(document.querySelectorAll('#mainTable tr'));
+      const csv = rows.map(row => {
+        const cols = Array.from(row.querySelectorAll('th, td'));
+        return cols.map(c=> '"'+(c.innerText.replace(/"/g,'""'))+'"').join(',');
+      }).join('\n');
+      const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'source-table.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
